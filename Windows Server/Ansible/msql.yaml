@@ -1,0 +1,13 @@
+- hosts: all
+  vars:
+    mssql_accept_microsoft_odbc_driver_17_for_sql_server_eula: true
+    mssql_accept_microsoft_cli_utilities_for_sql_server_eula: true
+    mssql_accept_microsoft_sql_server_standard_eula: true
+    mssql_password: "secret_password"
+    mssql_edition: Evaluation
+    mssql_enable_sql_agent: true
+    mssql_install_fts: true
+    mssql_install_powershell: true
+    mssql_tune_for_fua_storage: true
+  roles:
+    - microsoft.sql.server
