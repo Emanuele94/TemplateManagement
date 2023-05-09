@@ -47,7 +47,6 @@ terraform_create:
         - terraform -chdir=Terraform plan 
         - terraform -chdir=Terraform apply -auto-approve
     artifacts:
-        untracked: yes
         expose_as: "terraform"
         paths:
             - Terraform
