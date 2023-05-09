@@ -1,0 +1,46 @@
+- name: Install MinIO
+  hosts: all
+  become: true
+
+  tasks:
+  - name: Update and Upgrade APT Packages
+    apt:
+      upgrade: yes
+      update_cache: yes
+
+  - name: Download MinIO package
+    get_url:
+      url: https://dl.min.io/server/minio/release/linux-amd64/minio
+      dest: /usr/local/bin/
+
+  - name: Download minio service 
+    get_url: 
+      url: https://raw.githubusercontent.com/minio/minio-service/master/linux-systemd/minio.service
+      dest: /etc/systemd/system
+
+  - name: ansible config service
+    shell: |
+      chmod +x /usr/local/bin/minio
+      groupadd -r minio-user
+      useradd -M -r -g minio-user minio-user
+      touch /etc/default/minio
+      echo 'MINIO_ROOT_USER="minioadmin" 
+      MINIO_ROOT_PASSWORD="minioadmin"
+      MINIO_VOLUMES="/data/minio"
+      MINIO_OPTS="-C /etc/minio --console-address :9090"' > /etc/default/minio
+
+  - name: Create MinIO data directory
+    file:
+      path: /data/minio
+      state: directory
+      owner: minio-user
+      group: minio-user
+      mode: '0755'
+      recurse: yes
+
+  - name: start service
+    shell: |
+      systemctl daemon-reload
+      systemctl enable minio
+      systemctl start minio
+      systemctl restart minio
